@@ -3,6 +3,7 @@
  const ejs = require("ejs")
  const mongoose = require("mongoose")
   const bodyParser = require("body-parser");
+  const encrypt = require("mongoose-encryption")
   const app=express()
   app.use(express.static("/public"))
   app.set("view engine","ejs")
@@ -11,10 +12,12 @@
     useNewUrlParser: true
   }).then(console.log("mongo connected"))
 
-  const userSchema={
+  const userSchema= new mongoose.Schema({
     email:String,
     password:String
-  }
+  })
+   const secret="thisisasecret"
+  userSchema.plugin(encrypt,{secret:secret,encryptedFields:["password"]})
   const User = new mongoose.model("user", userSchema);
 
 app.get("/",(req,res)=>{
